@@ -12,9 +12,15 @@ W1 = tf.Variable(tf.random_normal([784, 100], stddev=0.1))
 b1 = tf.Variable(tf.zeros([100]))
 W2 = tf.Variable(tf.random_normal([100, 10], stddev=0.1))
 b2 = tf.Variable(tf.zeros([10]))
-y = tf.matmul(x, W1) + b1
+y = tf.matmul(x, W1)
+#y = tf.py_func(error, [y], tf.float32) # py_fun
+y = y + b1
 y = tf.nn.relu(y)
-y = tf.matmul(y, W2) + b2
+
+y = tf.matmul(y, W2)
+#y = tf.py_func(error, [y], tf.float32)
+y = y + b2
+
 y_ = tf.placeholder(tf.float32, shape=[None, 10])
 
 sess = tf.InteractiveSession()
@@ -22,7 +28,7 @@ tf.global_variables_initializer().run()
 
 # Restore Model
 saver = tf.train.Saver()
-saver.restore(sess, "model.ckpt")
+saver.restore(sess, "./model/model.ckpt")
 
 # Testing
 correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
